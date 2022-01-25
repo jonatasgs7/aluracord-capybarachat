@@ -1,21 +1,11 @@
+import React from 'react'
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import { useRouter } from 'next/router'
 import appConfig from '../config.json';
 
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {margin:0; padding:0; box-sizing: border-box; list-style:none;}
-      @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap');
-      body {font-family:'Roboto', sans-serif;}
-      html, body, #__next {min-height:100vh; display:flex; flex:1;}
-      #__next {flex: 1;}
-      #__next > * {flex: 1;}
-    `}</style>
-  );
-}
 
 function Titulo(props) {
-  const Tag = props.tag || 'h1';
+  const Tag = props.tag || 'h1'
   return (
     <>
       <Tag>{props.children}</Tag>
@@ -32,14 +22,20 @@ function Titulo(props) {
 
 
 export default function PaginaInicial() {
-  const username = 'jonatasgs7';
+  /*const username = 'jonatasgs7'
   let userImage = `https://github.com/${username}.png`
-  if(username === ''){ userImage = `https://i.ibb.co/m6NGMtb/user-blank-j.png` }
+  if(username === ''){ userImage = `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` }*/
+
+  
+
+  const [username, setUsername] = React.useState('')
+  const roteamento = useRouter()
+
+  let userImage = `https://github.com/${username}.png`
+  if(userImage == '404' || username.length < 2){ userImage = `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` }
 
   return (
     <>
-      <GlobalStyle />
-
       {/* All */}
       <Box styleSheet={{
           display:{lg:'flex', md:'display'}, width:'100%'
@@ -51,11 +47,18 @@ export default function PaginaInicial() {
         }}>
 
             {/* Box Form */}
-            <Box styleSheet={{
+            <Box
+            as="form"
+            onSubmit={(e) => {
+              e.preventDefault()
+              if(username.length >= 2){ roteamento.push('/chat') }
+            }}
+            styleSheet={{
                 width:'100%', maxWidth:{lg:'600px', md:'100%',sm:'100%'}, borderRadius:{md:'5px',sm:'0',xs:'0'}, padding:'28px', backdropFilter:'blur(5px)', margin:{lg:'20px', md:'0',sm:'0'}, background:'rgba(255,255,255,0.3)'
             }}>
 
                 {/* Imagem and github name */}
+              
                 <Box styleSheet={{width:'100%', margin:'0 0 15px', display:'flex', alignItems:'center'}}>
                     <Image
                         styleSheet={{borderRadius:'50%', maxWidth:'60px', marginRight:'15px'}}
@@ -64,17 +67,23 @@ export default function PaginaInicial() {
                     />
                     <Text tag="p" styleSheet={{color:appConfig.theme.colors.palette['07'], margin:'0', fontSize:'22px', fontWeight:'normal'}}>{username}</Text>
                 </Box>
+                
                         
                 {/* Titles */}
                 <Titulo tag="h1">Bem-vindo ao CapybaraChat</Titulo>
                 
                 <Text variant="body3" styleSheet={{ color:appConfig.theme.colors.palette['01'] }}>
-                {`${appConfig.name} - ${username}`}
+                {`${appConfig.name}`}
                 </Text>
 
                 {/* Form */}
                 <TextField
                 placeholder='Insira seu nome no chat'
+                value={username}
+                onChange={(e) => {
+                  const valor = e.target.value
+                  setUsername(valor)
+                }}
                 styleSheet={{
                     background:'transparent', border:'0', borderBottom:'1px solid #444', borderRadius:'0', marginTop:'30px', color:appConfig.theme.colors.palette['07'], textIndent:'0', paddingLeft:'0'
                 }}
