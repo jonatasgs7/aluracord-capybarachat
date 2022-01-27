@@ -32,7 +32,7 @@ export default function PaginaInicial() {
   const roteamento = useRouter()
 
   let userImage = `https://github.com/${username}.png`
-  if(userImage == '404' || username.length < 2){ userImage = `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` }
+  if(/* userImage == '404' || */ username.length < 2){ userImage = `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` }
 
   return (
     <>
@@ -79,6 +79,7 @@ export default function PaginaInicial() {
                 {/* Form */}
                 <TextField
                 placeholder='Insira seu nome no chat'
+                required='required'
                 value={username}
                 onChange={(e) => {
                   const valor = e.target.value

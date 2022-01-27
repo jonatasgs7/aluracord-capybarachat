@@ -7,6 +7,11 @@ function GlobalStyle() {
         html, body, #__next {min-height:100vh; display:flex; flex:1;}
         #__next {flex: 1;}
         #__next > * {flex: 1;}
+
+        ::-webkit-scrollbar {width:7px;}
+        ::-webkit-scrollbar-track {background:#212931;}
+        ::-webkit-scrollbar-thumb {background:#f3f3f3;}
+
       `}</style>
     );
 }
