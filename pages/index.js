@@ -26,8 +26,6 @@ export default function PaginaInicial() {
   let userImage = `https://github.com/${username}.png`
   if(username === ''){ userImage = `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` }*/
 
-  
-
   const [username, setUsername] = React.useState('')
   const roteamento = useRouter()
 
@@ -51,7 +49,7 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={(e) => {
               e.preventDefault()
-              if(username.length >= 2){ roteamento.push('/chat') }
+              if(username.length >= 2){ roteamento.push(`/chat?username=${username}`) }
             }}
             styleSheet={{
                 width:'100%', maxWidth:{lg:'600px', md:'100%',sm:'100%'}, borderRadius:{md:'5px',sm:'0',xs:'0'}, padding:'28px', backdropFilter:'blur(5px)', margin:{lg:'20px', md:'0',sm:'0'}, background:'rgba(255,255,255,0.3)'
