@@ -1,32 +1,62 @@
-import React from 'react';
-import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import appConfig from '../config.json';
+import React from 'react'
+import { Box, Text, TextField, Image, Button } from '@skynexui/components'
+import appConfig from '../config.json'
+import { createClient } from '@supabase/supabase-js'
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMzMzczMywiZXhwIjoxOTU4OTA5NzMzfQ.JAAqdhEiLw4StrWMhZlWudFDegQdevV0mgHtawTxT58'
+const SUPABASE_URL = 'https://zqhlmlywmrzfkqxvhwxy.supabase.co'
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export default function ChatPage() {
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
+    React.useEffect(() => {
+        const supabaseDados = supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', { ascending: false})
+            .then((data) => {
+                //console.log('Dados da consulta: ', dados)
+                setListaDeMensagens(data.data)
+            })
+    }, [])
+
+    
+
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
-            id: listaDeMensagens.length + 1,
+            //id: listaDeMensagens.length + 1,
             user: 'jonatasgs7',
             text: novaMensagem,
         };
 
-        setListaDeMensagens([
+        supabaseClient
+            .from('mensagens')
+            .insert([mensagem])
+            .then(({ data }) => {
+                setListaDeMensagens([
+                    data[0],
+                    ...listaDeMensagens
+                ])
+            })
+
+        {/* setListaDeMensagens([
             mensagem,
             ...listaDeMensagens,
         ]);
-        setMensagem('');
+        setMensagem(''); */}
     }
 
     return (
         <Box
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundColor: appConfig.theme.colors.primary[500],
-                backgroundImage:'linear-gradient(45deg, #ede0d4, #fff)',
+                backgroundColor: appConfig.theme.colors.palette['06'],
+                //backgroundImage:'linear-gradient(45deg, #ede0d4, #fff)',
+                backgroundImage: 'url(https://images2.imgbox.com/d4/b1/WceS1Cbm_o.png)',
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover',
+                backgroundPosition:'center',
                 color: appConfig.theme.colors.neutrals['000']
             }}
         >
@@ -35,12 +65,12 @@ export default function ChatPage() {
                     display: 'flex',
                     flexDirection: 'column',
                     flex: 1,
-                    boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
+                    //boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
                     borderRadius: '5px',
                     /*backgroundColor: appConfig.theme.colors.neutrals[700],*/
                     backgroundColor: appConfig.theme.colors.palette['05'],
                     height: '100%',
-                    maxWidth: '96%',
+                    maxWidth: '900px',
                     maxHeight: '96vh',
                     padding: '10px',
                     position:'relative'
@@ -62,8 +92,6 @@ export default function ChatPage() {
                     }}
                 >
 
-                    
-                    
                     <MessageList mensagens={listaDeMensagens} />
 
                     <Box
@@ -116,6 +144,9 @@ export default function ChatPage() {
                                 hover: {
                                     backgroundColor:'#14DBB3',
                                 },
+                                active: {
+                                    backgroundColor:'#00B38F',
+                                }
                                 
                             }}
                             label='Enviar'
@@ -146,15 +177,16 @@ function Header() {
 
                 <Box
                     styleSheet={{
-                        width:'66px',
+                        width:'160px',
                         height:'60px',
                         backgroundImage:'url(https://i.ibb.co/4VT6rJx/capybara-2-j.png)',
                         backgroundSize:'cover',
                         backgroundRepeat:'no-repeat',
                         zIndex:'300',
                         position:'relative',
-                        bottom:'-17px',
-                        left:'20px'
+                        bottom:'-16px',
+                        left:'50%',
+                        transform:'translateX(-50%)'
                     }}
                 >
                 </Box>
@@ -171,7 +203,6 @@ function Header() {
 }
 
 function MessageList(props) {
-    console.log(props);
     return (
         <Box
             tag="ul"
@@ -215,7 +246,7 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://github.com/jonatasgs7.png`}
+                                src={`https://github.com/${mensagem.user}.png`}
                             />
                             <Text tag="strong">
                                 {mensagem.user}
