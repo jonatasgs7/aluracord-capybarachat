@@ -9,8 +9,8 @@ function GlobalStyle() {
         #__next > * {flex: 1;}
 
         ::-webkit-scrollbar {width:7px;}
-        ::-webkit-scrollbar-track {background:#212931;}
-        ::-webkit-scrollbar-thumb {background:#f3f3f3;}
+        ::-webkit-scrollbar-track {background:#555;}
+        ::-webkit-scrollbar-thumb {background:#212931;}
 
       `}</style>
     );

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Text, TextField, Image } from '@skynexui/components';
+import { Box, Button, Text, TextField, Image, Icon } from '@skynexui/components';
 import { useRouter } from 'next/router'
 import appConfig from '../config.json';
 
@@ -76,7 +76,7 @@ export default function PaginaInicial() {
 
                 {/* Form */}
                 <TextField
-                placeholder='Insira seu nome no chat'
+                placeholder='Insira seu usuário do Github'
                 required='required'
                 value={username}
                 onChange={(e) => {

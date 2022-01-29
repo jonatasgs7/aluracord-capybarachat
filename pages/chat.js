@@ -1,8 +1,9 @@
 import React from 'react'
-import { Box, Text, TextField, Image, Button } from '@skynexui/components'
+import { Box, Text, TextField, Image, Button, Icon } from '@skynexui/components'
 import appConfig from '../config.json'
 import { useRouter } from 'next/router'
 import { createClient } from '@supabase/supabase-js'
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker'
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMzMzczMywiZXhwIjoxOTU4OTA5NzMzfQ.JAAqdhEiLw4StrWMhZlWudFDegQdevV0mgHtawTxT58'
 const SUPABASE_URL = 'https://zqhlmlywmrzfkqxvhwxy.supabase.co'
@@ -12,7 +13,26 @@ export default function ChatPage() {
     const roteamento = useRouter()
     const usuarioLogado = roteamento.query.username
     const [mensagem, setMensagem] = React.useState('')
-    const [listaDeMensagens, setListaDeMensagens] = React.useState([])
+    const [listaDeMensagens, setListaDeMensagens] = React.useState([
+
+        /* For test without backend
+         {
+            id : 1,
+            user: 'jonatasgs7',
+            text: ':sticker: https://media2.giphy.com/media/AQpUsaKCRD9gA/giphy.gif'
+        } */
+    ])
+    
+
+    function listenerMessage(adicionaMensagem){
+        supabaseClient
+        .from('mensagens')
+        .on('INSERT', ( respostaLive ) => {
+            adicionaMensagem(respostaLive.new)
+        })
+        .subscribe()
+    }
+
 
     React.useEffect(() => {
         const supabaseDados = supabaseClient
@@ -23,33 +43,45 @@ export default function ChatPage() {
                 //console.log('Dados da consulta: ', dados)
                 setListaDeMensagens(data.data)
             })
+
+            listenerMessage((novaMensagem) => {
+                //handleNovaMensagem(novaMensagem)
+                setListaDeMensagens((valorAtualDaLista) => {
+                    return [
+                        novaMensagem,
+                        ...valorAtualDaLista
+                    ]
+                })
+            })
     }, [])
 
-    
 
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             //id: listaDeMensagens.length + 1,
+            created_at: (new Date()),
             user: usuarioLogado,
             text: novaMensagem,
         };
+
 
         supabaseClient
             .from('mensagens')
             .insert([mensagem])
             .then(({ data }) => {
-                setListaDeMensagens([
-                    data[0],
-                    ...listaDeMensagens
-                ])
+
             })
 
         {/* setListaDeMensagens([
             mensagem,
             ...listaDeMensagens,
-        ]);
-        setMensagem(''); */}
+        ]); */
+
+        setMensagem('');}
     }
+
+    
+    
 
     return (
         <Box
@@ -72,8 +104,9 @@ export default function ChatPage() {
                     borderRadius: '5px',
                     /*backgroundColor: appConfig.theme.colors.neutrals[700],*/
                     backgroundColor: appConfig.theme.colors.palette['05'],
+                    width:'100%',
                     height: '100%',
-                    maxWidth: '900px',
+                    maxWidth: '96vh',
                     maxHeight: '96vh',
                     padding: '10px',
                     position:'relative'
@@ -91,7 +124,8 @@ export default function ChatPage() {
                         backgroundColor: appConfig.theme.colors.neutrals[600],
                         flexDirection: 'column',
                         borderRadius: '5px',
-                        padding: '16px',
+                        padding: '16px'
+                        
                     }}
                 >
 
@@ -102,6 +136,7 @@ export default function ChatPage() {
                         styleSheet={{
                             display: 'flex',
                             alignItems: 'center',
+                            paddingRight: '20px'
                         }}
                     >
                         <TextField
@@ -120,7 +155,7 @@ export default function ChatPage() {
                             type="textarea"
                             styleSheet={{
                                 width: '100%',
-                                minHeight: '70px',
+                                minHeight: '60px',
                                 border: '0',
                                 resize: 'none',
                                 float: 'left',
@@ -135,15 +170,13 @@ export default function ChatPage() {
 
                         <Button
                             styleSheet={{
-                                width:'140px',
-                                height:'70px',
+                                minWidth: '60px',
+                                minHeight: '60px',
                                 backgroundColor:'#00C9A1',
                                 color:'#fff',
-                                fontSize:'18px',
-                                fontWeight:'bold',
-                                float:'right',
                                 border:'0',
-                                borderRadius:'4px',
+                                marginRight:'10px',
+                                borderRadius:'50%',
                                 hover: {
                                     backgroundColor:'#14DBB3',
                                 },
@@ -152,7 +185,7 @@ export default function ChatPage() {
                                 }
                                 
                             }}
-                            label='Enviar'
+                            label={<Icon name="FaPaperPlane" size="3.2ch" />}
                             onClick={(e) => {
                                 e.preventDefault();
                                 if(mensagem !== ''){
@@ -161,6 +194,12 @@ export default function ChatPage() {
                             }}
                         >
                         </Button>
+
+                        <ButtonSendSticker
+                           onStickerClick={(sticker) => {
+                                handleNovaMensagem(`:sticker: ${sticker}`)
+                           }} 
+                        />
                     </Box>
 
                     
@@ -179,31 +218,40 @@ function Header() {
                 </Text> */}
 
                 <Box
-                    styleSheet={{
-                        width:'160px',
-                        height:'60px',
-                        backgroundImage:'url(https://i.ibb.co/4VT6rJx/capybara-2-j.png)',
-                        backgroundSize:'cover',
-                        backgroundRepeat:'no-repeat',
-                        zIndex:'300',
-                        position:'relative',
-                        bottom:'-16px',
-                        left:'50%',
-                        transform:'translateX(-50%)'
-                    }}
+                    // styleSheet={{
+                    //     width:'160px',
+                    //     height:'60px',
+                    //     backgroundImage:'url(https://i.ibb.co/4VT6rJx/capybara-2-j.png)',
+                    //     backgroundSize:'cover',
+                    //     backgroundRepeat:'no-repeat',
+                    //     zIndex:'300',
+                    //     position:'relative',
+                    //     bottom:'-16px',
+                    //     left:'50%',
+                    //     transform:'translateX(-50%)'
+                    // }}
                 >
                 </Box>
 
                 <Button
-                    variant='tertiary'
-                    colorVariant='neutral'
-                    label='Logout'
+                    styleSheet={{
+                        width:'60px',
+                        height:'60px',
+                        borderRadius:'50%',
+                        backgroundColor: 'red',
+                        position:'relative',
+                        top:'25px',
+                        zIndex:10
+                    }}
+                    label={<Icon name="FaSignOutAlt" size="3.2ch" />}
                     href="/"
                 />
             </Box>
+
         </>
     )
 }
+
 
 function MessageList(props) {
     return (
@@ -211,6 +259,7 @@ function MessageList(props) {
             tag="ul"
             styleSheet={{
                 overflowY: 'scroll',
+                overflowX: 'hidden',
                 display: 'flex',
                 flexDirection: 'column-reverse',
                 flex: 1,
@@ -227,13 +276,16 @@ function MessageList(props) {
                         key={mensagem.id}
                         tag="li"
                         styleSheet={{
+                            width:'100%',
                             borderRadius: '5px',
                             padding: '6px',
                             marginBottom: '12px',
                             hover: {
                                 backgroundColor: appConfig.theme.colors.neutrals[700],
                             },
-                            marginRight:'5px'
+                            marginRight:'5px',
+                            position:'relative',
+                            wordBreak:'break-all'
                         }}
                     >
                         <Box
@@ -243,13 +295,16 @@ function MessageList(props) {
                         >
                             <Image
                                 styleSheet={{
-                                    width: '26x',
-                                    height: '26px',
+                                    width: '30x',
+                                    height: '30px',
                                     borderRadius: '50%',
                                     display: 'inline-block',
                                     marginRight: '8px',
+                                    position: 'relative',
+                                    top:'8px'
                                 }}
-                                src={`https://github.com/${mensagem.user}.png`}
+                                src={`https://github.com/${mensagem.user}.png`
+                            }
                             />
                             <Text tag="strong">
                                 {mensagem.user}
@@ -263,9 +318,21 @@ function MessageList(props) {
                                 tag="span"
                             >
                                 {(new Date().toLocaleDateString())}
+                                
+                      
+                             
+                               
                             </Text>
                         </Box>
-                        {mensagem.text}
+
+
+                        {mensagem.text.startsWith(':sticker:') ? (
+                            <Image src={mensagem.text.replace(':sticker:', '')}
+                            styleSheet={{maxWidth:'150px'}} />
+                        ) : (
+                            mensagem.text
+                        )}
+                        
                     </Text>
                 );
             })}
