@@ -89,9 +89,10 @@ export default function ChatPage() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 backgroundColor: appConfig.theme.colors.palette['06'],
                 //backgroundImage:'linear-gradient(45deg, #ede0d4, #fff)',
-                backgroundImage: 'url(https://images2.imgbox.com/d4/b1/WceS1Cbm_o.png)',
+                //backgroundImage: 'url(https://images2.imgbox.com/d4/b1/WceS1Cbm_o.png)',
+                backgroundImage:'url(https://images2.imgbox.com/8b/2c/bHgIxynm_o.png)',
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover',
-                backgroundPosition:'center',
+                backgroundPosition:'center bottom',
                 color: appConfig.theme.colors.neutrals['000']
             }}
         >
@@ -218,18 +219,15 @@ function Header() {
                 </Text> */}
 
                 <Box
-                    // styleSheet={{
-                    //     width:'160px',
-                    //     height:'60px',
-                    //     backgroundImage:'url(https://i.ibb.co/4VT6rJx/capybara-2-j.png)',
-                    //     backgroundSize:'cover',
-                    //     backgroundRepeat:'no-repeat',
-                    //     zIndex:'300',
-                    //     position:'relative',
-                    //     bottom:'-16px',
-                    //     left:'50%',
-                    //     transform:'translateX(-50%)'
-                    // }}
+                    styleSheet={{
+                        width:'162px',
+                        height:'60px',
+                        backgroundImage:'url(https://images2.imgbox.com/87/99/G3y8g8IM_o.png)',
+                        backgroundSize:'cover',
+                        backgroundRepeat:'no-repeat',
+                        zIndex:'300',
+                        position:'relative',
+                    }}
                 >
                 </Box>
 
