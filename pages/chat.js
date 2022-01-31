@@ -9,9 +9,12 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5v
 const SUPABASE_URL = 'https://zqhlmlywmrzfkqxvhwxy.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+
+
 export default function ChatPage() {
     const roteamento = useRouter()
     const usuarioLogado = roteamento.query.username
+    const [user, setUser] = React.useState(false)
     const [mensagem, setMensagem] = React.useState('')
     const [listaDeMensagens, setListaDeMensagens] = React.useState([
 
@@ -22,6 +25,8 @@ export default function ChatPage() {
             text: ':sticker: https://media2.giphy.com/media/AQpUsaKCRD9gA/giphy.gif'
         } */
     ])
+
+    
     
 
     function listenerMessage(adicionaMensagem){
@@ -35,6 +40,7 @@ export default function ChatPage() {
 
 
     React.useEffect(() => {
+
         const supabaseDados = supabaseClient
             .from('mensagens')
             .select('*')
@@ -81,7 +87,6 @@ export default function ChatPage() {
     }
 
     
-    
 
     return (
         <Box
@@ -93,7 +98,10 @@ export default function ChatPage() {
                 backgroundImage:'url(https://images2.imgbox.com/8b/2c/bHgIxynm_o.png)',
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover',
                 backgroundPosition:'center bottom',
-                color: appConfig.theme.colors.neutrals['000']
+                color: appConfig.theme.colors.neutrals['000'],
+                hover : {
+
+                }
             }}
         >
             <Box
@@ -110,7 +118,10 @@ export default function ChatPage() {
                     maxWidth: '96vh',
                     maxHeight: '96vh',
                     padding: '10px',
-                    position:'relative'
+                    position:'relative',
+                    md: {
+                        backgroundColor:'seagreen'
+                    }
                 }}
             >
 
@@ -132,6 +143,20 @@ export default function ChatPage() {
 
                     <MessageList mensagens={listaDeMensagens} />
 
+                    {listaDeMensagens.length === 0 && <img src='https://media2.giphy.com/media/AQpUsaKCRD9gA/giphy.gif' style={{
+                        maxWidth:'80px',
+                        maxWidth:'80px',
+                        overflow:'hidden',
+                        borderRadius:'40px',
+                        mixBlendMode: 'screen',
+                        position: 'absolute',
+                        left: '50%',
+                        top:'50%',
+                        transform:'translate(-50%, -50%)',
+                        transition:'all 150ms linear'
+                    }}/>}
+
+                    
                     <Box
                         as="form"
                         styleSheet={{
@@ -211,7 +236,11 @@ export default function ChatPage() {
 }
 
 function Header() {
+    const routers = useRouter()
+    const userLogged = routers.query.username
+
     return (
+        
         <>
             <Box styleSheet={{ width: '100%', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} >
                 {/* <Text variant='heading5'>
@@ -230,6 +259,36 @@ function Header() {
                     }}
                 >
                 </Box>
+
+                <Box
+                    styleSheet={{
+                        fontSize:'12px',
+                        position:'absolute',
+                        right:'15px',
+                        top:'12px',
+                        color:'#AD9175'
+                    }}
+                >
+                {userLogged}
+                </Box>
+
+                <Image
+                    styleSheet={{
+                        width: '30x',
+                        height: '30px',
+                        borderRadius: '50%',
+                        display: 'inline-block',
+                        marginRight: '8px',
+                        position: 'absolute',
+                        top:'50px',
+                        right:'55px',
+                        zIndex:'11'
+                    }}
+                    src={`https://github.com/${userLogged}.png`
+                    }
+                />
+                
+                
 
                 <Button
                     styleSheet={{
@@ -252,6 +311,14 @@ function Header() {
 
 
 function MessageList(props) {
+
+    const handleDate = (data) => {
+        const novaData = new Date(data);
+        const dataAtual = new Date();
+        const dia = (dataAtual.toLocaleDateString() === novaData.toLocaleDateString()) ? 'Hoje' : novaData.toLocaleDateString();
+        return (`${dia} - ${novaData.toLocaleTimeString()}`)
+    }
+
     return (
         <Box
             tag="ul"
@@ -291,6 +358,7 @@ function MessageList(props) {
                                 marginBottom: '8px',
                             }}
                         >
+
                             <Image
                                 styleSheet={{
                                     width: '30x',
@@ -304,6 +372,8 @@ function MessageList(props) {
                                 src={`https://github.com/${mensagem.user}.png`
                             }
                             />
+
+    
                             <Text tag="strong">
                                 {mensagem.user}
                             </Text>
@@ -315,8 +385,9 @@ function MessageList(props) {
                                 }}
                                 tag="span"
                             >
-                                {(new Date().toLocaleDateString())}
-                                
+                                {/* {(new Date().toLocaleDateString())} */}
+
+                                {handleDate(mensagem.created_at)}                                
                       
                              
                                

@@ -27,10 +27,8 @@ export default function PaginaInicial() {
   if(username === ''){ userImage = `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` }*/
 
   const [username, setUsername] = React.useState('')
+  const [noImg, setNoImg] = React.useState(true)
   const roteamento = useRouter()
-
-  let userImage = `https://github.com/${username}.png`
-  if(/* userImage == '404' || */ username.length < 2){ userImage = `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` }
 
   return (
     <>
@@ -60,8 +58,17 @@ export default function PaginaInicial() {
                 <Box styleSheet={{width:'100%', margin:'0 0 15px', display:'flex', alignItems:'center'}}>
                     <Image
                         styleSheet={{borderRadius:'50%', maxWidth:'60px', marginRight:'15px'}}
-                        src={userImage}
+                        //src={userImage}
+                        
+
+                        src={noImg ? `https://i.ibb.co/hVMtKZF/user-blank-capybara-j.png` : `https://github.com/${username}.png`}
+                        onError={() => {
+                            if(!noImg)
+                                setNoImg(true)
+                          }}
                         alt={`Imagem de perfil do Github`}
+
+
                     />
                     <Text tag="p" styleSheet={{color:appConfig.theme.colors.palette['07'], margin:'0', fontSize:'22px', fontWeight:'normal'}}>{username}</Text>
                 </Box>
@@ -82,6 +89,9 @@ export default function PaginaInicial() {
                 onChange={(e) => {
                   const valor = e.target.value
                   setUsername(valor)
+                  if(noImg){
+                    setNoImg(false)
+                  }
                 }}
                 styleSheet={{
                     background:'transparent', border:'0', borderBottom:'1px solid #444', borderRadius:'0', marginTop:'30px', color:appConfig.theme.colors.palette['07'], textIndent:'0', paddingLeft:'0'
